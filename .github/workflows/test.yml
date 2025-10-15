@@ -5,8 +5,19 @@ on:
         branches: 
           - main
           - dev
+          - test-ci-workflows
         paths:
             - "**.py"
+            - "requirements.txt"
+            - ".github/workflows/test.yml"
+    pull_request:
+        branches:
+          - main
+          - dev
+          - test-ci-workflows
+        paths:
+            - "**.py"
+            - "requirements.txt"
             - ".github/workflows/test.yml"
     workflow_dispatch:
 
