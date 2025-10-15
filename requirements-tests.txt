@@ -4,3 +4,7 @@ pytest
 pytest-qt
 pytest-cov
 coredumpy
+fastapi
+uvicorn
+httpx
+pytest-asyncio

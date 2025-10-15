@@ -120,3 +120,11 @@ max-complexity = 30  # C901
 "tests/**.py" = ["S101"]
 "tools/**.py" = ["T201", "INP001"]
 "LDDC/gui/ui/**.py" = ["N801", "N802", "N803", "N806", "ANN001", "ANN201", "ARG002", "E501", "CPY001"]
+
+[dependency-groups]
+dev = [
+    "fastapi>=0.119.0",
+    "httpx>=0.28.1",
+    "pytest-asyncio>=1.2.0",
+    "uvicorn>=0.37.0",
+]

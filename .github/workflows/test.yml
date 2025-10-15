@@ -54,6 +54,10 @@ jobs:
                 sudo apt-get update
                 sudo apt-get install -y qtbase5-dev libqt5gui5 libqt5widgets5 xvfb
 
+            - name: Install FastAPI test dependencies
+              run: |
+                pip install fastapi uvicorn httpx pytest-asyncio
+
             - name: Run tests
               run: |
                 pytest --cov=LDDC --cov-report=xml --cov-report=html --cov-report=term --disable-warnings --enable-coredumpy --coredumpy-dir tests/artifacts/dumps -v
