@@ -2,7 +2,9 @@
 name = "LDDC"
 dynamic = ["version"]
 dependencies = [
-    "PySide6-Essentials>=6.8.0",
+    "fastapi>=0.119.0",
+    "uvicorn>=0.37.0",
+    "pydantic>=2.0.0",
     "httpx[brotli,http2]",
     "mutagen",
     "diskcache",
@@ -10,8 +12,6 @@ dependencies = [
     "pyaes",
     "psutil",
     "pyobjc-framework-Cocoa; sys_platform == 'darwin'",
-    "fastapi>=0.119.0",
-    "uvicorn>=0.37.0",
 ]
 requires-python = ">= 3.10"
 description = "A Practical Tool for Downloading verbatim Lyrics"
@@ -60,7 +60,7 @@ build-backend = "hatchling.build"
 
 [tool.hatch.build]
 include = ["LDDC/**"]
-exclude = ["*.ui", "*.qrc", "LDDC/res/img", "LDDC/res/i18n"]
+exclude = ["*.ui", "*.qrc", "LDDC/res/img", "LDDC/res/i18n", "LDDC/gui/**"]
 
 [tool.hatch.version]
 path = "LDDC/common/version.py"

@@ -9,7 +9,17 @@
 [![release](https://img.shields.io/github/v/release/chenmozhijin/LDDC?color=blue)](https://github.com/chenmozhijin/LDDC/releases/latest)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 
-LDDC是一个简单易用的精准歌词(逐字歌词)下载匹配工具。
+LDDC是一个简单易用的精准歌词(逐字歌词)下载匹配工具。现已支持**FastAPI Web服务**和**传统桌面应用**两种运行模式。
+
+## 🚀 新特性：FastAPI Web服务
+
+LDDC现在支持作为FastAPI Web服务运行，提供RESTful API接口：
+
+- 🌐 **Web API接口**：通过HTTP API调用所有歌词搜索和匹配功能
+- 🔄 **异步处理**：基于asyncio的高性能异步处理
+- 📊 **实时状态**：WebSocket支持实时状态更新和进度反馈
+- 🐳 **容器化部署**：支持Docker容器化部署
+- 🔧 **灵活集成**：可轻松集成到其他应用和服务中
 
 ## 主要特性
 
@@ -65,7 +75,60 @@ LDDC是一个简单易用的精准歌词(逐字歌词)下载匹配工具。
 
 ## 使用方法
 
+### FastAPI Web服务模式
+
+#### 安装依赖
+
+```bash
+pip install -r requirements.txt
+```
+
+#### 启动Web服务
+
+```bash
+# 使用默认配置启动
+python -m LDDC.__main___fastapi
+
+# 或指定端口和主机
+uvicorn LDDC.api.main:app --host 0.0.0.0 --port 8000
+```
+
+#### API使用示例
+
+```python
+import httpx
+
+# 搜索歌词
+response = httpx.post("http://localhost:8000/api/search", json={
+    "title": "歌曲名",
+    "artist": "艺术家",
+    "sources": ["netease", "qq", "kugou"]
+})
+
+# 获取歌词详情
+lyrics_id = response.json()["results"][0]["id"]
+lyrics_response = httpx.get(f"http://localhost:8000/api/lyrics/{lyrics_id}")
+```
+
+### 传统桌面应用模式
+
 见[LDDC使用指南](https://github.com/chenmozhijin/LDDC/wiki)
+
+## 项目结构
+
+```
+LDDC/
+├── api/                    # FastAPI Web服务
+├── common/                 # 通用模块
+│   ├── *_fastapi.py       # FastAPI兼容版本
+│   └── *.py               # 原PySide6版本
+├── core/                   # 核心功能
+│   ├── *_fastapi.py       # FastAPI兼容版本
+│   └── *.py               # 原PySide6版本
+├── __main__.py            # 桌面应用入口
+├── __main___fastapi.py    # Web服务入口
+└── requirements.txt       # FastAPI版本依赖
+```
 
 ## 感谢
 

@@ -31,6 +31,14 @@ jobs:
                 python-version: 3.12
                 architecture: ${{ matrix.arch }}
 
+            - name: Cache pip dependencies
+              uses: actions/cache@v4
+              with:
+                path: ~/.cache/pip
+                key: ${{ runner.os }}-pip-${{ hashFiles('requirements-tests.txt', 'requirements.txt') }}
+                restore-keys: |
+                  ${{ runner.os }}-pip-
+
             - name: Install dependencies
               run: |
                 pip install -Ur requirements-tests.txt
@@ -58,23 +66,48 @@ jobs:
               run: |
                 pip install fastapi uvicorn httpx pytest-asyncio
 
-            - name: Run tests
+            - name: Run GUI tests
               run: |
-                pytest --cov=LDDC --cov-report=xml --cov-report=html --cov-report=term --disable-warnings --enable-coredumpy --coredumpy-dir tests/artifacts/dumps -v
+                pytest tests/test_api.py tests/test_has_lyrics.py tests/test_translate.py --cov=LDDC --cov-report=xml --cov-report=html --cov-report=term --disable-warnings --enable-coredumpy --coredumpy-dir tests/artifacts/dumps -v
+
+            - name: Run FastAPI tests
+              run: |
+                pytest tests/test_fastapi.py tests/test_frontend.py --cov=LDDC --cov-append --cov-report=xml --cov-report=html --cov-report=term --disable-warnings -v
+
+            - name: Start FastAPI service for integration tests
+              run: |
+                python fastapi_app.py &
+                sleep 10
+              shell: bash
+
+            - name: FastAPI health check
+              run: |
+                curl -f http://localhost:8000/health || exit 1
+              shell: bash
+
+            - name: FastAPI integration tests
+              run: |
+                # Test search API
+                curl -f -X GET "http://localhost:8000/api/search?keyword=test&source=QM&search_type=SONG&page=1" || exit 1
+                
+                # Test static files
+                curl -f http://localhost:8000/static/style.css || exit 1
+                curl -f http://localhost:8000/static/script.js || exit 1
+              shell: bash
+
+            - name: Stop FastAPI service
+              if: always()
+              run: |
+                pkill -f "python fastapi_app.py" || true
+              shell: bash
 
             - name: Save test artifacts
               if: always()
-              run: |
-                mkdir -p tests/artifacts/reports
-                cp -r htmlcov ./tests/artifacts/reports
-                cp coverage.xml ./tests/artifacts/reports
-                export log_dir=$(python build_helper.py --task log_dir)
-                cp -r $log_dir ./tests/artifacts
-              shell: bash
-
-            - name: Upload artifacts
               uses: actions/upload-artifact@v4
-              if: always()
               with:
-                name: artifacts-${{ matrix.os }}
-                path: tests/artifacts
+                name: test-results-${{ matrix.os }}-${{ matrix.arch }}
+                path: |
+                  htmlcov/
+                  coverage.xml
+                  .coverage
+                retention-days: 7

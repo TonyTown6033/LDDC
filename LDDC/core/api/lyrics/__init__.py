@@ -241,7 +241,9 @@ def search(source: Source, keyword: str, search_type: SearchType, page: int = 1)
         list[SongInfo] | list[SongListInfo]: 搜索结果
 
     """
-    result, cached = cached_call_with_status(lyrics_api.search, {"expire": 14400}, source, keyword, search_type, page)
+    # 使用lambda包装实例方法调用，确保参数正确传递
+    search_func = lambda src, kw, st, pg: lyrics_api.search(src, kw, st, pg)
+    result, cached = cached_call_with_status(search_func, {"expire": 14400}, source, keyword, search_type, page)
     result.cached = cached
     return result
 

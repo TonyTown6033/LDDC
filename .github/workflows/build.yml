@@ -18,12 +18,12 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                os: [macos-13, ubuntu-22.04, windows-latest]
-                arch: [x64]
-                include:
-                  - os: macos-latest
+                os: [macos-latest, ubuntu-latest, windows-latest]
+                arch: [x64, arm64]
+                exclude:
+                  - os: ubuntu-latest
                     arch: arm64
-                  - os: ubuntu-24.04-arm
+                  - os: windows-latest
                     arch: arm64
 
         runs-on: ${{ matrix.os }}
@@ -35,6 +35,14 @@ jobs:
               with:
                 python-version: 3.12
                 architecture: ${{ matrix.arch }}
+
+            - name: Cache pip dependencies
+              uses: actions/cache@v4
+              with:
+                path: ~/.cache/pip
+                key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt', 'requirements-dev.txt') }}
+                restore-keys: |
+                  ${{ runner.os }}-pip-
 
             - name: Get arch
               id: arch
@@ -53,8 +61,9 @@ jobs:
             
             - name: Install dependencies
               run: |
-                pip install -Ur requirements.txt
-                pip install imageio
+                python -m pip install --upgrade pip
+                pip install -r requirements.txt
+                pip install nuitka ordered-set zstandard
             
             - name: Install EGL/upx
               if: ${{ runner.os == 'Linux' }}
@@ -181,6 +190,7 @@ jobs:
                 path: |
                   nuitka-crash-report.xml
                   nuitka-report.xml
+                retention-days: 7
             - name: create dmg
               if: ${{ runner.os == 'macOS' }}
               run: |
