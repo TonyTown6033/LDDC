@@ -158,14 +158,24 @@ class LDDCService(QObject):
 
             # 注意在调试模式下无法新建一个独立进程
             logger.info("在独立进程中启动LDDC服务,  命令行参数：%s", arguments)
-            subprocess.Popen(
-                arguments,
-                stdin=subprocess.PIPE,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                close_fds=True,
-                creationflags=subprocess.CREATE_NEW_PROCESS_GROUP | subprocess.DETACHED_PROCESS,
-            )
+            if sys.platform == "win32":
+                subprocess.Popen(
+                    arguments,
+                    stdin=subprocess.PIPE,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    close_fds=True,
+                    creationflags=subprocess.CREATE_NEW_PROCESS_GROUP | subprocess.DETACHED_PROCESS,
+                )
+            else:
+                subprocess.Popen(
+                    arguments,
+                    stdin=subprocess.PIPE,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    close_fds=True,
+                    start_new_session=True,
+                )
 
             wait_time = 0
             while not self.shared_memory.attach():

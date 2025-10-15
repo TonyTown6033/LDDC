@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LDDC 歌词下载器</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1><i class="fas fa-music"></i> LDDC 歌词下载器</h1>
+            <p>简单易用的在线歌词搜索和下载工具</p>
+        </header>
+
+        <main class="main-content">
+            <!-- 搜索区域 -->
+            <section class="search-section">
+                <div class="search-form">
+                    <div class="input-group">
+                        <input type="text" id="searchKeyword" placeholder="请输入歌曲名或歌手名..." class="search-input">
+                        <select id="searchSource" class="source-select">
+                            <option value="QM">QQ音乐</option>
+                            <option value="KG">酷狗音乐</option>
+                            <option value="NE">网易云音乐</option>
+                            <option value="LRCLIB">LrcLib</option>
+                        </select>
+                        <button id="searchBtn" class="search-btn">
+                            <i class="fas fa-search"></i> 搜索
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 加载状态 -->
+            <div id="loading" class="loading hidden">
+                <div class="spinner"></div>
+                <p>正在搜索中...</p>
+            </div>
+
+            <!-- 搜索结果区域 -->
+            <section id="resultsSection" class="results-section hidden">
+                <h2><i class="fas fa-list"></i> 搜索结果</h2>
+                <div id="searchResults" class="results-grid"></div>
+            </section>
+
+            <!-- 歌词显示区域 -->
+            <section id="lyricsSection" class="lyrics-section hidden">
+                <div class="lyrics-header">
+                    <h2><i class="fas fa-file-text"></i> 歌词内容</h2>
+                    <div class="lyrics-actions">
+                        <button id="downloadBtn" class="download-btn">
+                            <i class="fas fa-download"></i> 下载LRC文件
+                        </button>
+                        <button id="copyBtn" class="copy-btn">
+                            <i class="fas fa-copy"></i> 复制歌词
+                        </button>
+                    </div>
+                </div>
+                <div class="lyrics-info">
+                    <span id="lyricsTitle" class="lyrics-title"></span>
+                    <span id="lyricsArtist" class="lyrics-artist"></span>
+                </div>
+                <div id="lyricsContent" class="lyrics-content"></div>
+            </section>
+        </main>
+
+        <footer class="footer">
+            <p>&copy; 2024 LDDC 歌词下载器 | 基于 FastAPI 构建</p>
+        </footer>
+    </div>
+
+    <!-- 提示消息 -->
+    <div id="toast" class="toast hidden"></div>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>
