@@ -3,7 +3,7 @@
 from zlib import decompress
 
 from LDDC.common.exceptions import LyricsDecryptError
-from LDDC.common.logger import logger
+from LDDC.common.logger_fastapi import logger
 from LDDC.common.models import QrcType
 from LDDC.core.decryptor.qmc1 import qmc1_decrypt
 from LDDC.core.decryptor.tripledes import DECRYPT, tripledes_crypt, tripledes_key_setup

@@ -15,7 +15,7 @@ import httpx
 
 from LDDC.common.data.cache import cache
 from LDDC.common.exceptions import APIRequestError, LyricsNotFoundError
-from LDDC.common.logger import logger
+from LDDC.common.logger_fastapi import logger
 from LDDC.common.models import (
     APIResultList,
     Artist,

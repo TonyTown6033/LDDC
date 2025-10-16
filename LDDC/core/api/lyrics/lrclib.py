@@ -61,7 +61,13 @@ class LrclibAPI(CloudAPI):
             msg = "缺少必要参数"
             raise APIParamsError(msg)
 
-        params = {"track_name": info.title, "artist_name": info.artist.str(), "album_name": info.album, "duration": info.duration / 1000}
+        # 兼容传入的 artist 既可能是 Artist 也可能是 str
+        params = {
+            "track_name": info.title,
+            "artist_name": str(info.artist),
+            "album_name": info.album,
+            "duration": info.duration / 1000,
+        }
         data = self._make_request("/get", params)
 
         if "error" in data:

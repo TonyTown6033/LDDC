@@ -3,7 +3,7 @@
 
 from collections.abc import Callable
 
-from LDDC.common.data.config import cfg
+from LDDC.common.config_fastapi import cfg
 from LDDC.common.models import LyricsFormat, LyricsLine, MultiLyricsData
 from LDDC.common.time import ms2formattime, ms2roundedtime
 from LDDC.common.version import __version__

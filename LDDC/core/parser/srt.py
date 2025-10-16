@@ -5,7 +5,7 @@ import re
 from collections.abc import Generator
 from re import Pattern
 
-from LDDC.common.logger import logger
+from LDDC.common.logger_fastapi import logger
 from LDDC.common.models import (
     LyricsData,
     LyricsLine,

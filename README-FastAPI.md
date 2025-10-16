@@ -21,13 +21,14 @@
 ### 1. 安装依赖
 
 ```bash
-pip install -r requirements-fastapi.txt
+uv venv
+uv sync
 ```
 
 ### 2. 启动服务
 
 ```bash
-python fastapi_app.py
+uv run python fastapi_app.py
 ```
 
 服务将在 `http://localhost:8000` 启动。
@@ -112,8 +113,8 @@ curl "http://localhost:8000/lyrics_simple?song_id=001JZ1GY0Ja18Y&title=晴天&ar
 FROM python:3.9-slim
 
 WORKDIR /app
-COPY requirements-fastapi.txt .
-RUN pip install -r requirements-fastapi.txt
+COPY requirements.txt .
+RUN pip install -r requirements.txt
 
 COPY . .
 EXPOSE 8000
@@ -125,8 +126,8 @@ CMD ["python", "fastapi_app.py"]
 
 ```bash
 # 使用 gunicorn
-pip install gunicorn
-gunicorn fastapi_app:app -w 4 -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000
+uv pip install gunicorn
+uv run gunicorn fastapi_app:app -w 4 -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000
 ```
 
 ## 注意事项

@@ -5,8 +5,8 @@ import re
 import httpx
 
 from LDDC.common.data.cache import cache
-from LDDC.common.data.config import cfg
-from LDDC.common.logger import logger
+from LDDC.common.config_fastapi import cfg
+from LDDC.common.logger_fastapi import logger
 from LDDC.common.models import Lyrics, LyricsData, TranslateTargetLanguage
 from LDDC.common.version import __version__
 

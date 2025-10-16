@@ -6,7 +6,7 @@ from pathlib import Path
 
 from mutagen import File  # type: ignore[reportPrivateImportUsage] mutagen中的File被误定义为私有
 
-from LDDC.common.logger import logger
+from LDDC.common.logger_fastapi import logger
 from LDDC.common.models import Artist, SongInfo, Source
 from LDDC.common.time import time2ms
 from LDDC.common.utils import read_unknown_encoding_file

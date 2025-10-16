@@ -3,7 +3,7 @@
 from threading import Lock
 from typing import TYPE_CHECKING
 
-from LDDC.common.data.config import cfg
+from LDDC.common.config_fastapi import cfg
 from LDDC.common.models import Lyrics, LyricsData, TranslateSource
 
 if TYPE_CHECKING:

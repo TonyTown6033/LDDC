@@ -2,8 +2,8 @@
 # SPDX-License-Identifier: GPL-3.0-only
 import json
 
-from LDDC.common.data.config import cfg
-from LDDC.common.logger import logger
+from LDDC.common.config_fastapi import cfg
+from LDDC.common.logger_fastapi import logger
 from LDDC.common.models import Language, LyricsBase, LyricsFormat, LyricsType, Source
 from LDDC.core.algorithm import find_closest_match
 

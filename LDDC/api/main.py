@@ -6,13 +6,13 @@
 import asyncio
 from typing import List, Optional
 from fastapi import FastAPI, HTTPException, Query
-from fastapi.responses import PlainTextResponse, HTMLResponse
+from fastapi.responses import PlainTextResponse, HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from pathlib import Path
 
 from LDDC.common.models._enums import Source, SearchType, LyricsFormat
-from LDDC.common.models._info import SongInfo
+from LDDC.common.models._info import SongInfo, Artist
 from LDDC.core.api.lyrics import search, get_lyrics
 from LDDC.core.converter.lrc import lrc_converter
 from LDDC.common.logger_fastapi import get_logger
@@ -44,6 +44,14 @@ class LyricsRequest(BaseModel):
     album: str = ""
     duration: int = 0
     source: str = "QM"
+
+class LyricsJSONResponse(BaseModel):
+    title: str
+    artist: str
+    album: str = ""
+    duration: int = 0
+    source: str
+    lyrics: str
 
 # 源映射
 SOURCE_MAP = {
@@ -146,7 +154,7 @@ async def download_lyrics(request: LyricsRequest):
         song_info = SongInfo(
             id=request.song_id,
             title=request.title,
-            artist=request.artist,
+            artist=Artist(request.artist),
             album=request.album,
             duration=request.duration,
             source=source
@@ -213,6 +221,54 @@ async def lyrics_simple(
         source=source
     )
     return await download_lyrics(request)
+
+@app.post("/api/lyrics_json")
+async def download_lyrics_json(request: LyricsRequest):
+    """下载歌词并以JSON返回，包含歌曲基本信息与LRC文本"""
+    try:
+        if request.source not in SOURCE_MAP:
+            raise HTTPException(status_code=400, detail=f"不支持的音源: {request.source}")
+
+        source = SOURCE_MAP[request.source]
+        song_info = SongInfo(
+            id=request.song_id,
+            title=request.title,
+            artist=Artist(request.artist),
+            album=request.album,
+            duration=request.duration,
+            source=source
+        )
+
+        lyrics = await asyncio.to_thread(get_lyrics, song_info)
+        if not lyrics:
+            raise HTTPException(status_code=404, detail="未找到歌词")
+
+        lrc_content = lrc_converter(
+            lyrics.tags,
+            lyrics,
+            LyricsFormat.LINEBYLINELRC,
+            {},
+            ["orig"],
+        )
+
+        if not lrc_content:
+            raise HTTPException(status_code=404, detail="歌词转换失败")
+
+        payload = LyricsJSONResponse(
+            title=request.title,
+            artist=request.artist,
+            album=request.album,
+            duration=request.duration,
+            source=request.source,
+            lyrics=lrc_content,
+        )
+        return JSONResponse(content=payload.model_dump())
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"下载歌词JSON失败: {e}")
+        raise HTTPException(status_code=500, detail=f"下载歌词失败: {str(e)}")
 
 @app.get("/health")
 async def health_check():

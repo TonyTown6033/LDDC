@@ -80,17 +80,18 @@ LDDC现在支持作为FastAPI Web服务运行，提供RESTful API接口：
 #### 安装依赖
 
 ```bash
-pip install -r requirements.txt
+uv venv
+uv sync
 ```
 
 #### 启动Web服务
 
 ```bash
 # 使用默认配置启动
-python -m LDDC.__main___fastapi
+uv run -m LDDC.__main___fastapi
 
 # 或指定端口和主机
-uvicorn LDDC.api.main:app --host 0.0.0.0 --port 8000
+uv run uvicorn LDDC.api.main:app --host 0.0.0.0 --port 8000
 ```
 
 #### API使用示例

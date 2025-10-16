@@ -3,7 +3,7 @@
 import re
 
 from LDDC.common.exceptions import LyricsProcessingError
-from LDDC.common.logger import logger
+from LDDC.common.logger_fastapi import logger
 from LDDC.common.models import LyricsData, LyricsLine, LyricsWord
 
 from .lrc import lrc2data

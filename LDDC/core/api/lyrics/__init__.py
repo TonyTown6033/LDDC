@@ -13,7 +13,7 @@ from typing import TYPE_CHECKING, Literal, NoReturn, overload
 
 from LDDC.common.data.cache import cached_call_with_status
 from LDDC.common.exceptions import LDDCError, LyricsNotFoundError
-from LDDC.common.logger import logger
+from LDDC.common.logger_fastapi import logger
 from LDDC.common.models import APIResultList, LyricInfo, Lyrics, P, SearchType, SongInfo, SongListInfo, Source, T
 
 if TYPE_CHECKING:

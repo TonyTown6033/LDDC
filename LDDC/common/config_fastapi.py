@@ -59,6 +59,9 @@ class Config(dict):
             "skip_inst_lyrics": True,
             "auto_select": True,
             "add_end_timestamp_line": False,
+            "lrc_ms_digit_count": 3,
+            "last_ref_line_time_sty": 0,
+            "lrc_tag_info_src": 0,
 
             "save_mode": 0,
             "lyrics_format": 1,
@@ -87,8 +90,14 @@ class Config(dict):
 
             "translate_source": "BING",
             "translate_target_language": "SIMPLIFIED_CHINESE",
+            "translate_target_lang": "SIMPLIFIED_CHINESE",
             "translate_api_key": "",
             "translate_api_base": "",
+
+            # OpenAI translator compatibility keys
+            "openai_api_key": "",
+            "openai_model": "",
+            "openai_base_url": "",
 
             "log_level": "INFO",
             "check_update": True,
@@ -122,17 +131,29 @@ class Config(dict):
 
     def __setitem__(self, key: str, value: Any) -> None:
         with self.lock:
+            # 写入主键
             super().__setitem__(key, value)
+
+            # 处理别名同步
+            alias_map = {
+                "translate_target_language": "translate_target_lang",
+                "translate_target_lang": "translate_target_language",
+            }
+            if key in alias_map:
+                super().__setitem__(alias_map[key], value)
+
+            # 保存一次
             self.save()
-            
+
             # 发射相应的信号
             lyrics_related_keys = [
                 "lyrics_file_name_fmt", "default_save_path", "ID3_version",
                 "multi_search_sources", "langs_order", "skip_inst_lyrics",
                 "auto_select", "add_end_timestamp_line", "save_mode",
-                "lyrics_format", "lrc_ms", "lrc_offset"
+                "lyrics_format", "lrc_ms", "lrc_offset",
+                "lrc_ms_digit_count", "last_ref_line_time_sty", "lrc_tag_info_src",
             ]
-            
+
             desktop_lyrics_related_keys = [
                 "desktop_lyrics_enabled", "desktop_lyrics_font_family",
                 "desktop_lyrics_font_size", "desktop_lyrics_font_color",
@@ -142,14 +163,19 @@ class Config(dict):
                 "desktop_lyrics_position_y", "desktop_lyrics_width",
                 "desktop_lyrics_height", "desktop_lyrics_always_on_top",
                 "desktop_lyrics_click_through", "desktop_lyrics_auto_hide",
-                "desktop_lyrics_hide_timeout"
+                "desktop_lyrics_hide_timeout",
             ]
-            
-            if key in lyrics_related_keys:
-                self.lyrics_changed.emit((key, value))
-            
-            if key in desktop_lyrics_related_keys:
-                self.desktop_lyrics_changed.emit((key, value))
+
+            # 针对主键和别名都发信号
+            keys_to_emit = [key]
+            if key in alias_map:
+                keys_to_emit.append(alias_map[key])
+
+            for k in keys_to_emit:
+                if k in lyrics_related_keys:
+                    self.lyrics_changed.emit((k, value))
+                if k in desktop_lyrics_related_keys:
+                    self.desktop_lyrics_changed.emit((k, value))
 
     def get(self, key: str, default: Any = None) -> Any:
         with self.lock:
