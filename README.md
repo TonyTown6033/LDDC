@@ -9,7 +9,7 @@
 [![release](https://img.shields.io/github/v/release/chenmozhijin/LDDC?color=blue)](https://github.com/chenmozhijin/LDDC/releases/latest)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 
-LDDC是一个简单易用的精准歌词(逐字歌词)下载匹配工具。现已支持**FastAPI Web服务**和**传统桌面应用**两种运行模式。
+LDDC是一个简单易用的精准歌词(逐字歌词)下载匹配工具。现已支持**FastAPI Web服务**运行模式，并提供容器化部署方案。
 
 ## 🚀 新特性：FastAPI Web服务
 
@@ -21,61 +21,20 @@ LDDC现在支持作为FastAPI Web服务运行，提供RESTful API接口：
 - 🐳 **容器化部署**：支持Docker容器化部署
 - 🔧 **灵活集成**：可轻松集成到其他应用和服务中
 
-## 主要特性
+## 主要特性（Web）
 
-1. ⚡ **多线程快速匹配**：所有歌词匹配功能均采用多线程技术，实现**自动搜索**与**极速精准匹配**每一个歌词。
-2. 📝 **逐字歌词样式**：绝大多数歌曲都能获取到**逐字样式**的歌词，精准同步到每个字。
-3. 💾 **多种格式支持**：支持保存歌词为**逐字LRC**、**逐行LRC**、**增强型LRC**、**SRT**和**ASS**等格式，满足不同需求。
-4. 🎵 **多音乐平台歌词搜索**：支持搜索**QQ音乐**、**酷狗音乐**、**网易云音乐**中的单曲、专辑和歌单，支持从 **[Lrclib](https://lrclib.net/)** 获取歌词。
-5. 🖱️ **拖拽搜索**：将歌曲文件拖入界面，使用**多线程匹配**快速搜索匹配。
-6. 🎯 **本地歌词匹配**：一键为本地歌曲文件精准匹配歌词，采用**多线程匹配**提高匹配速度。
-7. 📥 **专辑/歌单歌词下载**：一键为整个**专辑**或**歌单**下载歌词。
-8. 👀 **歌词预览与保存**：双击预览歌词，支持保存为**歌词文件**或直接写入**歌曲标签**。
-9. 🛠️ **多样歌词组合**：灵活组合**原文**、**译文**、**罗马音**的歌词内容，满足个性化歌词需求。
-10. 💻 **多系统支持**：支持 **Windows**、**macOS** 和 **Linux** 操作系统，满足不同用户的需求。
-11. 🔧 **灵活保存路径**：支持使用多种路径占位符自定义保存路径。
-12. 🔓 **加密歌词支持**：支持打开本地加密歌词文件。
-13. 🎤 **桌面歌词（foobar2000插件：[foo_lddc](https://github.com/chenmozhijin/foo_lddc)）**：
-    - 🚀 为播放的歌曲**多线程快速匹配**歌词。
-    - 🎶 支持卡拉**OK样式**的歌词显示。
-    - 🖊️ 支持**多行歌词显示**，可分别展示原文、翻译、罗马音的歌词内容
-    - 🌈 支持歌词**淡入淡出**效果，并自动匹配屏幕刷新率，确保歌词显示流畅。
-    - 🔍 提供类似搜索界面的窗口，方便手动选择歌词。
-    - ✨ 实现字符缓存，降低系统资源占用。
-    - 🌟 支持自定义**字符渐变色**效果。
-14. 🔁 **歌词翻译功能**：支持使用**Bing/Google/OpenAI兼容API**进行歌词翻译
-15. ♻️ **批量格式转换**：支持歌词格式批量转换功能
+- 🌐 Web API：通过 HTTP API 提供歌词搜索、下载、格式转换能力
+- 🐳 容器化部署：提供 Dockerfile，支持一键构建与运行
+- 🔎 多平台搜索：QQ音乐、酷狗音乐、网易云，支持 Lrclib
+- 📝 多格式输出：逐字LRC、逐行LRC、增强LRC、SRT、ASS
+- 🔁 翻译支持：Bing/Google/OpenAI兼容API（可选）
+- 📈 健康检查：`GET /health` 返回服务状态
 
-## 预览
+<!-- 预览与桌面应用相关内容已移除，README 仅保留 Web 服务说明 -->
 
-### 拖拽搜索
+## 使用方法（Web）
 
-![gif](img/drop.gif)
-
-### 搜索界面
-
-![image](img/zh-Hans_1.jpg)
-
-### 本地匹配
-
-![image](img/zh-Hans_3.jpg)
-
-### 打开歌词/设置界面
-
-![image](img/zh-Hans_2.jpg)
-
-### 桌面歌词
-
-![image](img/zh-Hans_4.jpg)
-![gif](img/desktop_lyrics.gif)
-
-### 批量转换
-
-![image](img/zh-Hans_5.jpg)
-
-## 使用方法
-
-### FastAPI Web服务模式
+### 本地运行（uv）
 
 #### 安装依赖
 
@@ -84,7 +43,7 @@ uv venv
 uv sync
 ```
 
-#### 启动Web服务
+#### 启动 Web 服务
 
 ```bash
 # 使用默认配置启动
@@ -92,43 +51,71 @@ uv run -m LDDC.__main___fastapi
 
 # 或指定端口和主机
 uv run uvicorn LDDC.api.main:app --host 0.0.0.0 --port 8000
+
+浏览器访问 `http://localhost:8000/`（静态前端）或 `http://localhost:8000/docs`（交互式 API 文档）。
+
+#### Docker 部署与操作
+
+使用项目根目录的 `Dockerfile` 构建并运行：
+
+```bash
+# 构建镜像
+docker build -t lddc-fastapi:latest .
+
+# 启动容器（映射 8000 端口）
+docker run -d --name lddc-fastapi -p 8000:8000 lddc-fastapi:latest
+
+# 查看健康状态与日志
+curl http://localhost:8000/health
+docker logs -f lddc-fastapi
+
+# 停止并清理
+docker stop lddc-fastapi && docker rm lddc-fastapi
 ```
 
-#### API使用示例
+容器入口为 `LDDC.api.main:app`，首页会自动挂载静态前端（如存在 `static/` 目录）。
+```
+
+#### API 使用示例
 
 ```python
 import httpx
 
-# 搜索歌词
-response = httpx.post("http://localhost:8000/api/search", json={
-    "title": "歌曲名",
-    "artist": "艺术家",
-    "sources": ["netease", "qq", "kugou"]
+# 搜索（POST /api/search）
+resp = httpx.post("http://localhost:8000/api/search", json={
+    "keyword": "周杰伦 晴天",
+    "source": "QM",            # 可选: QM/KG/NE/LRCLIB
+    "search_type": "SONG",     # 可选: SONG/ALBUM/ARTIST
+    "page": 1
 })
+data = resp.json()
+song = data["results"][0]
 
-# 获取歌词详情
-lyrics_id = response.json()["results"][0]["id"]
-lyrics_response = httpx.get(f"http://localhost:8000/api/lyrics/{lyrics_id}")
+# 下载歌词（POST /api/lyrics），返回 LRC 文本
+lr = httpx.post("http://localhost:8000/api/lyrics", json={
+    "song_id": song["id"],
+    "title": song["title"],
+    "artist": song["artist"],
+    "album": song.get("album", ""),
+    "duration": song.get("duration", 0),
+    "source": song["source"]
+})
+print(lr.text)
 ```
 
-### 传统桌面应用模式
-
-见[LDDC使用指南](https://github.com/chenmozhijin/LDDC/wiki)
+<!-- 桌面应用相关内容已移除，详见原仓库 Wiki -->
 
 ## 项目结构
 
 ```
 LDDC/
-├── api/                    # FastAPI Web服务
-├── common/                 # 通用模块
-│   ├── *_fastapi.py       # FastAPI兼容版本
-│   └── *.py               # 原PySide6版本
-├── core/                   # 核心功能
-│   ├── *_fastapi.py       # FastAPI兼容版本
-│   └── *.py               # 原PySide6版本
-├── __main__.py            # 桌面应用入口
-├── __main___fastapi.py    # Web服务入口
-└── requirements.txt       # FastAPI版本依赖
+├── api/                  # FastAPI 应用
+├── common/               # 通用模块（含 FastAPI 兼容实现）
+├── core/                 # 核心功能（含 FastAPI 兼容实现）
+├── static/               # 前端静态资源（如存在则挂载到 / ）
+├── __main___fastapi.py   # 本地启动入口
+├── Dockerfile            # 容器入口：LDDC.api.main:app
+└── requirements.txt      # 依赖
 ```
 
 ## 感谢
