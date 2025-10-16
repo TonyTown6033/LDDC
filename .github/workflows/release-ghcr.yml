@@ -31,6 +31,10 @@ jobs:
             SHORT_SHA=$(echo "${GITHUB_SHA}" | cut -c1-7)
             echo "VERSION=manual-${SHORT_SHA}" >> "$GITHUB_OUTPUT"
           fi
+          OWNER_LC="${GITHUB_REPOSITORY_OWNER,,}"
+          REPO_LC="${GITHUB_REPOSITORY,,}"
+          echo "OWNER_LC=${OWNER_LC}" >> "$GITHUB_OUTPUT"
+          echo "REPO_LC=${REPO_LC}" >> "$GITHUB_OUTPUT"
 
       - name: Set up Python 3.12
         uses: actions/setup-python@v5
@@ -47,7 +51,7 @@ jobs:
         run: uv run pytest -q -k "not test_real_translation" --maxfail=1
 
       - name: Docker build smoke (ensure Dockerfile builds)
-        run: docker build -t ghcr.io/${{ github.repository }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.VERSION }} .
+        run: docker build -t ghcr.io/${{ steps.meta.outputs.OWNER_LC }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.VERSION }} .
 
   build-and-push:
     name: Build & Push Image
@@ -67,6 +71,10 @@ jobs:
             SHORT_SHA=$(echo "${GITHUB_SHA}" | cut -c1-7)
             echo "VERSION=manual-${SHORT_SHA}" >> "$GITHUB_OUTPUT"
           fi
+          OWNER_LC="${GITHUB_REPOSITORY_OWNER,,}"
+          REPO_LC="${GITHUB_REPOSITORY,,}"
+          echo "OWNER_LC=${OWNER_LC}" >> "$GITHUB_OUTPUT"
+          echo "REPO_LC=${REPO_LC}" >> "$GITHUB_OUTPUT"
 
       - name: Log in to GHCR
         uses: docker/login-action@v3
@@ -77,10 +85,10 @@ jobs:
 
       - name: Build image
         run: |
-          docker build -t ghcr.io/${{ github.repository }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.VERSION }} .
+          docker build -t ghcr.io/${{ steps.meta.outputs.OWNER_LC }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.VERSION }} .
 
       - name: Push image
-        run: docker push ghcr.io/${{ github.repository }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.VERSION }}
+        run: docker push ghcr.io/${{ steps.meta.outputs.OWNER_LC }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.VERSION }}
 
       - name: Create Release with image info
         if: github.event_name == 'push'
@@ -88,6 +96,6 @@ jobs:
         with:
           body: |
             Docker Image available:
-            `docker pull ghcr.io/${{ github.repository }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.VERSION }}`
+            `docker pull ghcr.io/${{ steps.meta.outputs.OWNER_LC }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.VERSION }}`
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
