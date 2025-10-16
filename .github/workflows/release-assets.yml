@@ -1,0 +1,59 @@
+name: Release Assets
+
+on:
+  release:
+    types: [published, edited]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-assets-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-upload:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install build dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install build
+
+      - name: Build Python package (sdist + wheel)
+        run: |
+          python -m build
+
+      - name: Prepare artifacts directory
+        run: |
+          mkdir -p artifacts
+
+      - name: Archive static site
+        run: |
+          if [ -d "static" ]; then
+            tar -czf artifacts/static.tar.gz -C static .
+          fi
+
+      - name: Include docker-compose.yml
+        run: |
+          if [ -f "docker-compose.yml" ]; then
+            cp docker-compose.yml artifacts/
+          fi
+
+      - name: Upload assets to GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            dist/*
+            artifacts/static.tar.gz
+            artifacts/docker-compose.yml
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
