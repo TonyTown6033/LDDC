@@ -187,6 +187,7 @@ async def download_lyrics(request: LyricsRequest):
         raise HTTPException(status_code=500, detail=f"下载歌词失败: {str(e)}")
 
 @app.get("/api/search")
+@app.get("/search_simple")
 async def search_simple(
     keyword: str = Query(..., description="搜索关键词"),
     source: str = Query("QM", description="音源 (QM/KG/NE/LRCLIB)"),
@@ -203,6 +204,7 @@ async def search_simple(
     return await search_lyrics(request)
 
 @app.get("/api/lyrics")
+@app.get("/lyrics_simple")
 async def lyrics_simple(
     song_id: str = Query(..., description="歌曲ID"),
     title: str = Query(..., description="歌曲标题"),
