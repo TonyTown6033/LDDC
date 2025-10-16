@@ -74,6 +74,53 @@ docker stop lddc-fastapi && docker rm lddc-fastapi
 ```
 
 容器入口为 `LDDC.api.main:app`，首页会自动挂载静态前端（如存在 `static/` 目录）。
+
+##### 使用已发布镜像（GHCR）
+
+已在 GitHub Container Registry 发布多架构镜像（支持 `linux/amd64` 和 `linux/arm64`）。
+
+- 拉取最新版本：
+
+```bash
+docker pull ghcr.io/chenmozhijin/lddc-fastapi:latest
+```
+
+- 拉取指定发布版本（请在 Releases 查看 `vX.Y.Z` 标签）：
+
+```bash
+docker pull ghcr.io/chenmozhijin/lddc-fastapi:vX.Y.Z
+```
+
+- 直接运行已发布镜像：
+
+```bash
+docker run -d \
+  --name lddc \
+  -p 8000:8000 \
+  ghcr.io/chenmozhijin/lddc-fastapi:latest
+
+# 验证服务
+curl http://localhost:8000/health
+# 浏览器访问 http://localhost:8000/ 与 http://localhost:8000/docs
+```
+
+- 使用 Docker Compose（可覆盖镜像引用）：
+
+项目根目录提供 `docker-compose.yml`，支持环境变量 `IMAGE_REF`：
+
+```bash
+# 指定镜像（可选）
+echo IMAGE_REF=ghcr.io/chenmozhijin/lddc-fastapi:latest > .env
+
+# 以后台方式启动
+docker compose up -d
+
+# 查看状态与日志
+docker compose ps
+docker compose logs -f
+```
+
+Compose 默认映射 `8000:8000`，并设置 `restart: unless-stopped`，适合长期运行。
 ```
 
 #### API 使用示例

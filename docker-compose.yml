@@ -1,0 +1,24 @@
+version: "3.9"
+
+services:
+  lddc:
+    image: ${IMAGE_REF:-ghcr.io/chenmozhijin/lddc-fastapi:latest}
+    container_name: lddc
+    ports:
+      - "${HOST_PORT:-8000}:${PORT:-8000}"
+    environment:
+      - PYTHONPATH=/app
+      - LANG=${LANG:-C.UTF-8}
+      - PORT=${PORT:-8000}
+    # 依赖的健康检查已在 Dockerfile 中定义为 /health
+    volumes:
+      - ./.lddc/config:/root/.config/LDDC
+      - ./.lddc/data:/root/.local/share/LDDC
+      - ./.lddc/cache:/root/.cache/LDDC
+    restart: unless-stopped
+    # 可选：限制日志大小，避免宿主机日志膨胀
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
