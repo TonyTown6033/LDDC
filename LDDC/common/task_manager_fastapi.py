@@ -8,7 +8,7 @@ from threading import Lock, RLock
 from typing import Any, Generic, final
 from weakref import WeakKeyDictionary
 
-from .logger import logger
+from .logger_fastapi import logger
 from .models import P, T
 from .thread_fastapi import in_other_thread, is_exited, threadpool
 

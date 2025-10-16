@@ -7,7 +7,7 @@ from typing import Any
 import concurrent.futures
 import threading
 
-from .logger import logger
+from .logger_fastapi import logger
 from .models import P, T
 
 exit_event = Event()

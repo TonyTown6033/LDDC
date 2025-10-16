@@ -14,7 +14,7 @@ import httpx
 
 from LDDC.common.data.cache import cache
 from LDDC.common.exceptions import APIRequestError
-from LDDC.common.logger import logger
+from LDDC.common.logger_fastapi import logger
 from LDDC.common.models import APIResultList, Artist, LyricInfo, Lyrics, SearchInfo, SearchType, SongInfo, SongListInfo, SongListType, Source
 from LDDC.common.version import __version__
 from LDDC.core.decryptor.eapi import eapi_params_encrypt, eapi_response_decrypt, get_anonimous_username, get_cache_key
