@@ -149,11 +149,3 @@ jobs:
         with:
           name: ${{ env.IMAGE_NAME }}-${{ steps.meta.outputs.VERSION }}.tar.gz
           path: ${{ env.IMAGE_NAME }}-${{ steps.meta.outputs.VERSION }}.tar.gz
-
-      - name: Upload image tarball to GitHub Release assets
-        if: github.event_name == 'release'
-        uses: softprops/action-gh-release@v1
-        with:
-          files: ${{ env.IMAGE_NAME }}-${{ steps.meta.outputs.VERSION }}.tar.gz
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

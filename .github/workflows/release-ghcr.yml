@@ -4,6 +4,8 @@ on:
   push:
     tags:
       - '*'
+  release:
+    types: [published, edited]
   workflow_dispatch:
 
 permissions:
@@ -25,7 +27,9 @@ jobs:
         id: meta
         shell: bash
         run: |
-          if [[ "${GITHUB_REF}" == refs/tags/* ]]; then
+          if [ "${{ github.event_name }}" = "release" ]; then
+            echo "VERSION=${{ github.event.release.tag_name }}" >> "$GITHUB_OUTPUT"
+          elif [[ "${GITHUB_REF}" == refs/tags/* ]]; then
             echo "VERSION=${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
           else
             SHORT_SHA=$(echo "${GITHUB_SHA}" | cut -c1-7)
@@ -65,7 +69,9 @@ jobs:
         id: meta
         shell: bash
         run: |
-          if [[ "${GITHUB_REF}" == refs/tags/* ]]; then
+          if [ "${{ github.event_name }}" = "release" ]; then
+            echo "VERSION=${{ github.event.release.tag_name }}" >> "$GITHUB_OUTPUT"
+          elif [[ "${GITHUB_REF}" == refs/tags/* ]]; then
             echo "VERSION=${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
           else
             SHORT_SHA=$(echo "${GITHUB_SHA}" | cut -c1-7)
@@ -90,10 +96,14 @@ jobs:
       - name: Push image
         run: docker push ghcr.io/${{ steps.meta.outputs.OWNER_LC }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.VERSION }}
 
-      - name: Create Release with image info
-        if: github.event_name == 'push'
+      - name: Create deployable tarball
+        run: |
+          docker save ghcr.io/${{ steps.meta.outputs.OWNER_LC }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.VERSION }} | gzip > ${{ env.IMAGE_NAME }}-${{ steps.meta.outputs.VERSION }}.tar.gz
+
+      - name: Upload tarball to GitHub Release assets
         uses: softprops/action-gh-release@v1
         with:
+          files: ${{ env.IMAGE_NAME }}-${{ steps.meta.outputs.VERSION }}.tar.gz
           body: |
             Docker Image available:
             `docker pull ghcr.io/${{ steps.meta.outputs.OWNER_LC }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.VERSION }}`
