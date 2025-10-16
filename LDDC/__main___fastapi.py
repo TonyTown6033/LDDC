@@ -44,7 +44,7 @@ def main():
         from LDDC.api.main import app
         
         # 配置服务器参数
-        host = "127.0.0.1"
+        host = "0.0.0.0"
         port = 8000
         
         logger.info(f"FastAPI服务将在 http://{host}:{port} 启动")
